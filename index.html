@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>任務雲 - Task Cloud</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>任務雲</h1>
+            <div class="breadcrumb" id="breadcrumb">
+                <span class="breadcrumb-item" data-level="0">首頁</span>
+            </div>
+            <button id="addTaskBtn" class="add-task-btn">+ 新增任務</button>
+        </header>
+
+        <main>
+            <div id="taskCloud" class="task-cloud">
+                <!-- 任務將動態生成在這裡 -->
+            </div>
+        </main>
+
+        <!-- 任務編輯模態框 -->
+        <div id="taskEditModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>編輯任務</h2>
+                <form id="taskEditForm">
+                    <div class="form-group">
+                        <label for="taskTitle">任務標題:</label>
+                        <input type="text" id="taskTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskUrgency">緊急程度 (1-10):</label>
+                        <input type="range" id="taskUrgency" min="1" max="10" value="5">
+                        <span id="urgencyValue">5</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskImportance">重要程度 (1-10):</label>
+                        <input type="range" id="taskImportance" min="1" max="10" value="5">
+                        <span id="importanceValue">5</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">任務描述:</label>
+                        <textarea id="taskDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">保存</button>
+                        <button type="button" id="deleteTaskBtn" class="delete-btn">刪除任務</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

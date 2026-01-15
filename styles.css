@@ -1,0 +1,326 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft JhengHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+#app {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 100;
+}
+
+header h1 {
+    color: #333;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.breadcrumb-item {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.breadcrumb-item:hover {
+    background-color: #f0f0f0;
+}
+
+.breadcrumb-item:not(:last-child)::after {
+    content: ' > ';
+    margin-left: 0.5rem;
+    color: #999;
+}
+
+.add-task-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+    box-shadow: 0 2px 5px rgba(76, 175, 80, 0.3);
+}
+
+.add-task-btn:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+}
+
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+}
+
+.task-cloud {
+    width: 100%;
+    max-width: 1200px;
+    height: 70vh;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    overflow: hidden;
+}
+
+.task-item {
+    position: absolute;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.task-item:hover {
+    transform: scale(1.1);
+    z-index: 50;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* 顏色系統 - 根據重要性決定 */
+.task-item.importance-10 { color: #ff0000; } /* 紅色 - 最重要 */
+.task-item.importance-9 { color: #ff1a1a; }
+.task-item.importance-8 { color: #ff3333; }
+.task-item.importance-7 { color: #ff4d4d; }
+.task-item.importance-6 { color: #ff6666; }
+.task-item.importance-5 { color: #ff9900; } /* 橙色 */
+.task-item.importance-4 { color: #ffcc00; } /* 黃色 */
+.task-item.importance-3 { color: #99cc00; } /* 黃綠色 */
+.task-item.importance-2 { color: #66cc00; } /* 綠色 */
+.task-item.importance-1 { color: #0099cc; } /* 藍色 - 最不重要 */
+
+/* 字體大小 - 根據緊急程度決定 */
+.task-item.urgency-10 { font-size: 3rem; }
+.task-item.urgency-9 { font-size: 2.8rem; }
+.task-item.urgency-8 { font-size: 2.6rem; }
+.task-item.urgency-7 { font-size: 2.4rem; }
+.task-item.urgency-6 { font-size: 2.2rem; }
+.task-item.urgency-5 { font-size: 2rem; }
+.task-item.urgency-4 { font-size: 1.8rem; }
+.task-item.urgency-3 { font-size: 1.6rem; }
+.task-item.urgency-2 { font-size: 1.4rem; }
+.task-item.urgency-1 { font-size: 1.2rem; }
+
+/* 模態框樣式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.modal-content h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+.form-group input[type="range"] {
+    padding: 0;
+}
+
+.range-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.range-value {
+    min-width: 2rem;
+    text-align: center;
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.form-actions button {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.form-actions button[type="submit"] {
+    background: #4CAF50;
+    color: white;
+}
+
+.form-actions button[type="submit"]:hover {
+    background: #45a049;
+}
+
+.delete-btn {
+    background: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background: #da190b;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    header {
+        padding: 1rem;
+    }
+    
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .task-cloud {
+        height: 60vh;
+        margin: 1rem;
+    }
+    
+    .task-item.urgency-10 { font-size: 2rem; }
+    .task-item.urgency-9 { font-size: 1.8rem; }
+    .task-item.urgency-8 { font-size: 1.6rem; }
+    .task-item.urgency-7 { font-size: 1.4rem; }
+    .task-item.urgency-6 { font-size: 1.3rem; }
+    .task-item.urgency-5 { font-size: 1.2rem; }
+    .task-item.urgency-4 { font-size: 1.1rem; }
+    .task-item.urgency-3 { font-size: 1rem; }
+    .task-item.urgency-2 { font-size: 0.9rem; }
+    .task-item.urgency-1 { font-size: 0.8rem; }
+    
+    .modal-content {
+        margin: 10% auto;
+        padding: 1.5rem;
+    }
+}
+
+/* 空狀態樣式 */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+}
+
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+}
