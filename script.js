@@ -6,7 +6,11 @@ class TaskCloud {
         this.navigationStack = [];
         this.longPressTimer = null;
         this.currentEditingTask = null;
-        
+
+        // 創建用於測量文字寬度的 canvas
+        this.measureCanvas = document.createElement('canvas');
+        this.measureContext = this.measureCanvas.getContext('2d');
+
         this.init();
     }
 
@@ -178,71 +182,124 @@ class TaskCloud {
         });
     }
 
+    // 精確測量文字寬度
+    measureTextWidth(text, urgency) {
+        // 根據緊急程度設置字體大小
+        const fontSizes = {
+            4: '3rem',     // Today
+            3: '2.4rem',   // in 7 days
+            2: '1.8rem',   // in 21 days
+            1: '1.4rem'    // 1 month
+        };
+
+        // 將 rem 轉換為 px（假設 1rem = 16px）
+        const fontSizePx = parseFloat(fontSizes[urgency]) * 16;
+        this.measureContext.font = `bold ${fontSizePx}px 'Microsoft JhengHei', 'Segoe UI', sans-serif`;
+
+        const metrics = this.measureContext.measureText(text);
+        return metrics.width;
+    }
+
+    // 獲取任務的實際尺寸（包含 padding）
+    getTaskDimensions(task) {
+        const textWidth = this.measureTextWidth(task.title, task.urgency);
+        const padding = 16; // 0.5rem * 2 sides = 16px
+        const margin = 30; // 額外的安全邊距
+
+        return {
+            width: textWidth + padding + margin,
+            height: 80 // 固定高度（包含 padding 和邊距）
+        };
+    }
+
     calculatePositions(tasks) {
         const container = document.getElementById('taskCloud');
         const containerRect = container.getBoundingClientRect();
         const centerX = containerRect.width / 2;
         const centerY = containerRect.height / 2;
-        
+
         const positions = [];
         const usedPositions = [];
-        
+
         // 按照緊急程度從高到低分配位置
         const sortedTasks = [...tasks].sort((a, b) => b.urgency - a.urgency);
-        
+
         sortedTasks.forEach((task, index) => {
             let position;
             let attempts = 0;
-            const maxAttempts = 100;
-            
+            const maxAttempts = 500; // 增加嘗試次數
+            const taskDimensions = this.getTaskDimensions(task);
+
             do {
                 if (index === 0) {
                     // 第一個（最緊急的）任務放在正中央
-                    position = { x: centerX, y: centerY };
+                    position = {
+                        x: centerX,
+                        y: centerY,
+                        width: taskDimensions.width,
+                        height: taskDimensions.height
+                    };
                 } else {
-                    // 其他任務以螺旋方式從中心向外擴散
-                    const angle = (index * 137.5) * Math.PI / 180; // 黃金角
-                    const radius = 50 + (index * 40); // 隨著索引增加，半徑也增加
-                    
+                    // 使用改進的螺旋算法
+                    // 增加角度變化和半徑步長以更好地分散任務
+                    const spiralFactor = 1.5; // 螺旋擴散因子
+                    const angle = (index * 137.5 + attempts * 5) * Math.PI / 180; // 黃金角 + 微調
+                    const radius = 80 + (index * 50 * spiralFactor) + (attempts * 3); // 增加基礎半徑和步長
+
                     position = {
                         x: centerX + radius * Math.cos(angle),
-                        y: centerY + radius * Math.sin(angle)
+                        y: centerY + radius * Math.sin(angle),
+                        width: taskDimensions.width,
+                        height: taskDimensions.height
                     };
-                    
+
                     // 確保不超出邊界
-                    const taskWidth = task.urgency * 20; // 根據緊急程度估算寬度
-                    const taskHeight = 60;
-                    
-                    position.x = Math.max(taskWidth/2, Math.min(containerRect.width - taskWidth/2, position.x));
-                    position.y = Math.max(taskHeight/2, Math.min(containerRect.height - taskHeight/2, position.y));
+                    const halfWidth = taskDimensions.width / 2;
+                    const halfHeight = taskDimensions.height / 2;
+
+                    position.x = Math.max(halfWidth + 10, Math.min(containerRect.width - halfWidth - 10, position.x));
+                    position.y = Math.max(halfHeight + 10, Math.min(containerRect.height - halfHeight - 10, position.y));
                 }
-                
+
                 attempts++;
-            } while (this.checkOverlap(position, usedPositions, task) && attempts < maxAttempts);
-            
+
+                // 如果嘗試次數過多，強制放置
+                if (attempts >= maxAttempts) {
+                    console.warn(`任務 "${task.title}" 無法找到完全無重疊的位置，已強制放置`);
+                    break;
+                }
+            } while (this.checkOverlap(position, usedPositions));
+
             positions.push(position);
             usedPositions.push({ ...position, task });
         });
-        
+
         return positions;
     }
 
-    checkOverlap(newPosition, usedPositions, newTask) {
-        const newTaskWidth = newTask.urgency * 20;
-        const newTaskHeight = 60;
-        const minDistance = Math.max(newTaskWidth, newTaskHeight) + 20; // 最小距離
-        
+    // 使用 AABB（軸對齊邊界框）碰撞檢測
+    checkOverlap(newPosition, usedPositions) {
+        // 計算新位置的邊界框
+        const newLeft = newPosition.x - newPosition.width / 2;
+        const newRight = newPosition.x + newPosition.width / 2;
+        const newTop = newPosition.y - newPosition.height / 2;
+        const newBottom = newPosition.y + newPosition.height / 2;
+
+        // 檢查是否與任何已使用的位置重疊
         return usedPositions.some(used => {
-            const distance = Math.sqrt(
-                Math.pow(newPosition.x - used.x, 2) + 
-                Math.pow(newPosition.y - used.y, 2)
-            );
-            
-            const usedTaskWidth = used.task.urgency * 20;
-            const usedTaskHeight = 60;
-            const minUsedDistance = Math.max(usedTaskWidth, usedTaskHeight) + 20;
-            
-            return distance < (minDistance + minUsedDistance) / 2;
+            const usedLeft = used.x - used.width / 2;
+            const usedRight = used.x + used.width / 2;
+            const usedTop = used.y - used.height / 2;
+            const usedBottom = used.y + used.height / 2;
+
+            // AABB 碰撞檢測：如果兩個矩形在任何軸上沒有重疊，則它們不相交
+            const noOverlap = newRight < usedLeft ||   // 新矩形在已用矩形左側
+                             newLeft > usedRight ||    // 新矩形在已用矩形右側
+                             newBottom < usedTop ||    // 新矩形在已用矩形上方
+                             newTop > usedBottom;      // 新矩形在已用矩形下方
+
+            // 返回 true 表示有重疊
+            return !noOverlap;
         });
     }
 
