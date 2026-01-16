@@ -33,14 +33,22 @@
                         <input type="text" id="taskTitle" required>
                     </div>
                     <div class="form-group">
-                        <label for="taskUrgency">緊急程度 (1-10):</label>
-                        <input type="range" id="taskUrgency" min="1" max="10" value="5">
-                        <span id="urgencyValue">5</span>
+                        <label for="taskUrgency">緊急程度:</label>
+                        <select id="taskUrgency">
+                            <option value="1">1 month</option>
+                            <option value="2">in 21 days</option>
+                            <option value="3">in 7 days</option>
+                            <option value="4">Today</option>
+                        </select>
                     </div>
                     <div class="form-group">
-                        <label for="taskImportance">重要程度 (1-10):</label>
-                        <input type="range" id="taskImportance" min="1" max="10" value="5">
-                        <span id="importanceValue">5</span>
+                        <label for="taskImportance">重要程度:</label>
+                        <select id="taskImportance">
+                            <option value="1">No Impact</option>
+                            <option value="2">Noticeable Impact</option>
+                            <option value="3">Significant Impact</option>
+                            <option value="4">Life-Changing Impact</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="taskDescription">任務描述:</label>

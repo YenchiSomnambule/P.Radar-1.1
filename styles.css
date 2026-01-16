@@ -118,28 +118,16 @@ main {
 
 
 /* 顏色系統 - 根據重要性決定 */
-.task-item.importance-10 { color: #ff0000; } /* 紅色 - 最重要 */
-.task-item.importance-9 { color: #ff1a1a; }
-.task-item.importance-8 { color: #ff3333; }
-.task-item.importance-7 { color: #ff4d4d; }
-.task-item.importance-6 { color: #ff6666; }
-.task-item.importance-5 { color: #ff9900; } /* 橙色 */
-.task-item.importance-4 { color: #ffcc00; } /* 黃色 */
-.task-item.importance-3 { color: #99cc00; } /* 黃綠色 */
-.task-item.importance-2 { color: #66cc00; } /* 綠色 */
-.task-item.importance-1 { color: #0099cc; } /* 藍色 - 最不重要 */
+.task-item.importance-4 { color: #ff0000; } /* 紅色 - Life-Changing Impact */
+.task-item.importance-3 { color: #ff9900; } /* 橙色 - Significant Impact */
+.task-item.importance-2 { color: #ffcc00; } /* 黃色 - Noticeable Impact */
+.task-item.importance-1 { color: #4CAF50; } /* 綠色 - No Impact */
 
 /* 字體大小 - 根據緊急程度決定 */
-.task-item.urgency-10 { font-size: 3rem; }
-.task-item.urgency-9 { font-size: 2.8rem; }
-.task-item.urgency-8 { font-size: 2.6rem; }
-.task-item.urgency-7 { font-size: 2.4rem; }
-.task-item.urgency-6 { font-size: 2.2rem; }
-.task-item.urgency-5 { font-size: 2rem; }
-.task-item.urgency-4 { font-size: 1.8rem; }
-.task-item.urgency-3 { font-size: 1.6rem; }
-.task-item.urgency-2 { font-size: 1.4rem; }
-.task-item.urgency-1 { font-size: 1.2rem; }
+.task-item.urgency-4 { font-size: 3rem; }   /* Today - 最緊急 */
+.task-item.urgency-3 { font-size: 2.4rem; } /* in 7 days */
+.task-item.urgency-2 { font-size: 1.8rem; } /* in 21 days */
+.task-item.urgency-1 { font-size: 1.4rem; } /* 1 month - 最不緊急 */
 
 /* 模態框樣式 */
 .modal {
@@ -206,36 +194,22 @@ main {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
     width: 100%;
     padding: 0.75rem;
     border: 2px solid #ddd;
     border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s;
+    background-color: white;
 }
 
 .form-group input:focus,
-.form-group textarea:focus {
+.form-group textarea:focus,
+.form-group select:focus {
     outline: none;
     border-color: #4CAF50;
-}
-
-.form-group input[type="range"] {
-    padding: 0;
-}
-
-.range-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.range-value {
-    min-width: 2rem;
-    text-align: center;
-    font-weight: bold;
-    color: #4CAF50;
 }
 
 .form-actions {
@@ -286,17 +260,11 @@ main {
         height: 60vh;
         margin: 1rem;
     }
-    
-    .task-item.urgency-10 { font-size: 2rem; }
-    .task-item.urgency-9 { font-size: 1.8rem; }
-    .task-item.urgency-8 { font-size: 1.6rem; }
-    .task-item.urgency-7 { font-size: 1.4rem; }
-    .task-item.urgency-6 { font-size: 1.3rem; }
-    .task-item.urgency-5 { font-size: 1.2rem; }
-    .task-item.urgency-4 { font-size: 1.1rem; }
-    .task-item.urgency-3 { font-size: 1rem; }
-    .task-item.urgency-2 { font-size: 0.9rem; }
-    .task-item.urgency-1 { font-size: 0.8rem; }
+
+    .task-item.urgency-4 { font-size: 2rem; }   /* Today - 最緊急 */
+    .task-item.urgency-3 { font-size: 1.5rem; } /* in 7 days */
+    .task-item.urgency-2 { font-size: 1.2rem; } /* in 21 days */
+    .task-item.urgency-1 { font-size: 1rem; }   /* 1 month - 最不緊急 */
     
     .modal-content {
         margin: 10% auto;
