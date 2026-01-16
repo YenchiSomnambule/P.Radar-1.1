@@ -240,14 +240,11 @@ class TaskCloud {
         }
 
         cloudContainer.innerHTML = '';
-        
-        // 根據緊急程度排序（緊急的優先佔位）
-        const sortedTasks = [...tasks].sort((a, b) => b.urgency - a.urgency);
-        
-        // 計算位置（中央向外擴散，避免重疊）
-        const positions = this.calculatePositions(sortedTasks);
-        
-        sortedTasks.forEach((task, index) => {
+
+        // 計算位置（按緊急性分組，中央向外擴散，確保不重疊）
+        const positions = this.calculatePositions(tasks);
+
+        tasks.forEach((task, index) => {
             const taskElement = this.createTaskElement(task, positions[index]);
             cloudContainer.appendChild(taskElement);
         });
@@ -289,83 +286,100 @@ class TaskCloud {
         const centerX = containerRect.width / 2;
         const centerY = containerRect.height / 2;
 
-        const positions = [];
-        const usedPositions = [];
+        // 按緊急性分組（4 -> 3 -> 2 -> 1，從高到低）
+        const groupedByUrgency = {
+            4: [],
+            3: [],
+            2: [],
+            1: []
+        };
 
-        // 按照緊急程度從高到低分配位置
-        const sortedTasks = [...tasks].sort((a, b) => b.urgency - a.urgency);
-
-        sortedTasks.forEach((task, index) => {
-            let position;
-            let attempts = 0;
-            const maxAttempts = 1000; // 增加嘗試次數
-            const taskDimensions = this.getTaskDimensions(task);
-            const halfWidth = taskDimensions.width / 2;
-            const halfHeight = taskDimensions.height / 2;
-
-            do {
-                let validPosition = false;
-
-                if (index === 0) {
-                    // 第一個（最緊急的）任務放在正中央
-                    position = {
-                        x: centerX,
-                        y: centerY,
-                        width: taskDimensions.width,
-                        height: taskDimensions.height
-                    };
-                    validPosition = true;
-                } else {
-                    // 使用改進的螺旋算法
-                    const spiralFactor = 1.8; // 增加螺旋擴散因子
-                    const angle = (index * 137.5 + attempts * 15) * Math.PI / 180; // 增加角度變化幅度
-                    const radius = 100 + (index * 60 * spiralFactor) + (attempts * 8); // 增加基礎半徑和步長
-
-                    const testX = centerX + radius * Math.cos(angle);
-                    const testY = centerY + radius * Math.sin(angle);
-
-                    // 檢查是否在邊界內（不裁剪，而是標記為無效）
-                    if (testX - halfWidth >= 20 &&
-                        testX + halfWidth <= containerRect.width - 20 &&
-                        testY - halfHeight >= 20 &&
-                        testY + halfHeight <= containerRect.height - 20) {
-
-                        position = {
-                            x: testX,
-                            y: testY,
-                            width: taskDimensions.width,
-                            height: taskDimensions.height
-                        };
-                        validPosition = true;
-                    }
-                }
-
-                attempts++;
-
-                // 如果嘗試次數過多，使用後備策略
-                if (attempts >= maxAttempts) {
-                    console.warn(`任務 "${task.title}" 無法找到完全無重疊的位置，使用後備位置`);
-                    // 後備策略：放在隨機位置但確保在邊界內
-                    position = {
-                        x: halfWidth + 20 + Math.random() * (containerRect.width - taskDimensions.width - 40),
-                        y: halfHeight + 20 + Math.random() * (containerRect.height - taskDimensions.height - 40),
-                        width: taskDimensions.width,
-                        height: taskDimensions.height
-                    };
-                    break;
-                }
-
-                // 只有在位置有效且不重疊時才跳出循環
-                if (validPosition && !this.checkOverlap(position, usedPositions)) {
-                    break;
-                }
-            } while (true);
-
-            positions.push(position);
-            usedPositions.push({ ...position, task });
+        tasks.forEach(task => {
+            groupedByUrgency[task.urgency].push(task);
         });
 
-        return positions;
+        const positions = [];
+        let currentRadius = 0; // 從中心開始
+
+        // 按緊急性從高到低處理（4, 3, 2, 1）
+        [4, 3, 2, 1].forEach(urgency => {
+            const tasksInGroup = groupedByUrgency[urgency];
+            if (tasksInGroup.length === 0) return;
+
+            // 計算這一圈所需的最大任務尺寸
+            let maxWidth = 0;
+            let maxHeight = 0;
+            tasksInGroup.forEach(task => {
+                const dims = this.getTaskDimensions(task);
+                maxWidth = Math.max(maxWidth, dims.width);
+                maxHeight = Math.max(maxHeight, dims.height);
+            });
+
+            // 如果是第一組（最緊急的），並且只有一個任務，放在正中心
+            if (currentRadius === 0 && tasksInGroup.length === 1) {
+                const task = tasksInGroup[0];
+                const dims = this.getTaskDimensions(task);
+                positions.push({
+                    task: task,
+                    x: centerX,
+                    y: centerY,
+                    width: dims.width,
+                    height: dims.height
+                });
+                // 設置下一圈的起始半徑
+                currentRadius = Math.max(maxWidth, maxHeight) / 2 + 80;
+                return;
+            }
+
+            // 計算這一圈需要的半徑
+            // 使用圓周公式確保任務之間不重疊：C = 2πr
+            // 需要的圓周長度 = 任務數量 × (最大任務寬度 + 間距)
+            const spacing = 40; // 任務之間的最小間距
+            const requiredCircumference = tasksInGroup.length * (maxWidth + spacing);
+            const minRadius = requiredCircumference / (2 * Math.PI);
+
+            // 如果是第一圈但有多個任務，使用計算出的最小半徑
+            if (currentRadius === 0) {
+                currentRadius = Math.max(minRadius, 120);
+            } else {
+                // 後續圈：確保不與上一圈重疊
+                const newRadius = Math.max(
+                    currentRadius + maxHeight + 60, // 上一圈的半徑 + 這圈的高度 + 間距
+                    minRadius
+                );
+                currentRadius = newRadius;
+            }
+
+            // 在這一圈上均勻分布任務
+            const angleStep = (2 * Math.PI) / tasksInGroup.length;
+            const startAngle = -Math.PI / 2; // 從頂部開始
+
+            tasksInGroup.forEach((task, index) => {
+                const angle = startAngle + index * angleStep;
+                const x = centerX + currentRadius * Math.cos(angle);
+                const y = centerY + currentRadius * Math.sin(angle);
+                const dims = this.getTaskDimensions(task);
+
+                positions.push({
+                    task: task,
+                    x: x,
+                    y: y,
+                    width: dims.width,
+                    height: dims.height
+                });
+            });
+
+            // 為下一圈設置起始半徑
+            currentRadius = currentRadius + maxHeight / 2 + 40;
+        });
+
+        // 將positions數組轉換為與原始tasks順序匹配的格式
+        const positionMap = new Map();
+        positions.forEach(pos => {
+            positionMap.set(pos.task.id, pos);
+        });
+
+        return tasks.map(task => positionMap.get(task.id));
     }
 
     // 使用 AABB（軸對齊邊界框）碰撞檢測，增加額外的安全邊距
