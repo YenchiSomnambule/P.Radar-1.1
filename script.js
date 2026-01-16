@@ -69,59 +69,130 @@ class TaskCloud {
             root: [
                 {
                     id: 'task1',
-                    title: '完成專案報告',
+                    title: 'Life-Changing Impact, Today',
                     urgency: 4,
                     importance: 4,
-                    description: '需要在本週五之前完成季度專業報告',
+                    description: '',
                     children: []
                 },
                 {
                     id: 'task2',
-                    title: '團隊會議',
+                    title: 'Life-Changing Impact, in 7 days',
                     urgency: 3,
-                    importance: 3,
-                    description: '每週固定團隊同步會議',
-                    children: [
-                        {
-                            id: 'task2-1',
-                            title: '準備會議資料',
-                            urgency: 4,
-                            importance: 3,
-                            description: '準備本週會議需要的所有資料',
-                            children: []
-                        },
-                        {
-                            id: 'task2-2',
-                            title: '會議記錄',
-                            urgency: 2,
-                            importance: 2,
-                            description: '記錄會議重點並整理成文檔',
-                            children: []
-                        }
-                    ]
+                    importance: 4,
+                    description: '',
+                    children: []
                 },
                 {
                     id: 'task3',
-                    title: '學習新技術',
+                    title: 'Life-Changing Impact, in 21 days',
                     urgency: 2,
-                    importance: 3,
-                    description: '學習 React 和 Vue.js 的新功能',
+                    importance: 4,
+                    description: '',
                     children: []
                 },
                 {
                     id: 'task4',
-                    title: '健身運動',
-                    urgency: 3,
-                    importance: 2,
-                    description: '每週至少運動三次',
+                    title: 'Life-Changing Impact, 1 month',
+                    urgency: 1,
+                    importance: 4,
+                    description: '',
                     children: []
                 },
                 {
                     id: 'task5',
-                    title: '購買生活用品',
+                    title: 'Significant Impact, Today',
+                    urgency: 4,
+                    importance: 3,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task6',
+                    title: 'Significant Impact, in 7 days',
+                    urgency: 3,
+                    importance: 3,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task7',
+                    title: 'Significant Impact, in 21 days',
+                    urgency: 2,
+                    importance: 3,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task8',
+                    title: 'Significant Impact, 1 month',
+                    urgency: 1,
+                    importance: 3,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task9',
+                    title: 'Noticeable Impact, Today',
+                    urgency: 4,
+                    importance: 2,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task10',
+                    title: 'Noticeable Impact, in 7 days',
+                    urgency: 3,
+                    importance: 2,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task11',
+                    title: 'Noticeable Impact, in 21 days',
+                    urgency: 2,
+                    importance: 2,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task12',
+                    title: 'Noticeable Impact, 1 month',
+                    urgency: 1,
+                    importance: 2,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task13',
+                    title: 'No Impact, Today',
+                    urgency: 4,
+                    importance: 1,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task14',
+                    title: 'No Impact, in 7 days',
+                    urgency: 3,
+                    importance: 1,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task15',
+                    title: 'No Impact, in 21 days',
+                    urgency: 2,
+                    importance: 1,
+                    description: '',
+                    children: []
+                },
+                {
+                    id: 'task16',
+                    title: 'No Impact, 1 month',
                     urgency: 1,
                     importance: 1,
-                    description: '購買日常生活所需用品',
+                    description: '',
                     children: []
                 }
             ]
