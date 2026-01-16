@@ -45,15 +45,6 @@ class TaskCloud {
             this.deleteTask();
         });
 
-        // 緊急程度和重要程度滑桿
-        document.getElementById('taskUrgency').addEventListener('input', (e) => {
-            document.getElementById('urgencyValue').textContent = e.target.value;
-        });
-
-        document.getElementById('taskImportance').addEventListener('input', (e) => {
-            document.getElementById('importanceValue').textContent = e.target.value;
-        });
-
         // 麵包屑導航
         document.getElementById('breadcrumb').addEventListener('click', (e) => {
             if (e.target.classList.contains('breadcrumb-item')) {
@@ -75,31 +66,31 @@ class TaskCloud {
                 {
                     id: 'task1',
                     title: '完成專案報告',
-                    urgency: 9,
-                    importance: 8,
+                    urgency: 4,
+                    importance: 4,
                     description: '需要在本週五之前完成季度專業報告',
                     children: []
                 },
                 {
                     id: 'task2',
                     title: '團隊會議',
-                    urgency: 7,
-                    importance: 6,
+                    urgency: 3,
+                    importance: 3,
                     description: '每週固定團隊同步會議',
                     children: [
                         {
                             id: 'task2-1',
                             title: '準備會議資料',
-                            urgency: 8,
-                            importance: 7,
+                            urgency: 4,
+                            importance: 3,
                             description: '準備本週會議需要的所有資料',
                             children: []
                         },
                         {
                             id: 'task2-2',
                             title: '會議記錄',
-                            urgency: 5,
-                            importance: 4,
+                            urgency: 2,
+                            importance: 2,
                             description: '記錄會議重點並整理成文檔',
                             children: []
                         }
@@ -108,24 +99,24 @@ class TaskCloud {
                 {
                     id: 'task3',
                     title: '學習新技術',
-                    urgency: 4,
-                    importance: 7,
+                    urgency: 2,
+                    importance: 3,
                     description: '學習 React 和 Vue.js 的新功能',
                     children: []
                 },
                 {
                     id: 'task4',
                     title: '健身運動',
-                    urgency: 6,
-                    importance: 5,
+                    urgency: 3,
+                    importance: 2,
                     description: '每週至少運動三次',
                     children: []
                 },
                 {
                     id: 'task5',
                     title: '購買生活用品',
-                    urgency: 3,
-                    importance: 3,
+                    urgency: 1,
+                    importance: 1,
                     description: '購買日常生活所需用品',
                     children: []
                 }
@@ -362,14 +353,10 @@ class TaskCloud {
             document.getElementById('taskUrgency').value = task.urgency;
             document.getElementById('taskImportance').value = task.importance;
             document.getElementById('taskDescription').value = task.description || '';
-            document.getElementById('urgencyValue').textContent = task.urgency;
-            document.getElementById('importanceValue').textContent = task.importance;
             deleteBtn.style.display = 'block';
         } else {
             // 新增任務
             form.reset();
-            document.getElementById('urgencyValue').textContent = '5';
-            document.getElementById('importanceValue').textContent = '5';
             deleteBtn.style.display = 'none';
         }
         
